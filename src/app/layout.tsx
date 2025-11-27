@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
 import { Noto_Sans_KR } from 'next/font/google';
+import "./globals.css";
+import GlobalPopup from '@/components/Popup/GlobalPopup';
 
 const notoSansKr = Noto_Sans_KR({
   subsets: ['latin'],
@@ -22,6 +22,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={notoSansKr.className}>
         {children}
+        <GlobalPopup />
       </body>
     </html>
   );

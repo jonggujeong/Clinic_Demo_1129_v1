@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "디지털 임플란트의 정석, 실제 진료 과정을 공개합니다.",
+    "category": "임플란트",
+    "content": "디지털 임플란트 시술 사례입니다...",
+    "imageUrl": "https://laonnuri-case.com/wp-content/uploads/2025/10/image-173.png",
+    "createdAt": "2023-10-27T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "발치 후 틀니? 임플란트? 당일 즉시 임시치아 제작",
+    "category": "임플란트",
+    "content": "발치 후 즉시 식립 사례...",
+    "imageUrl": "https://laonnuri-case.com/wp-content/uploads/2025/10/image-167.png",
+    "createdAt": "2023-10-26T10:00:00Z"
+  },
+  {
+    "id": "3",
+    "title": "당일 전체 임플란트 수술 후 임시치아까지",
+    "category": "임플란트",
+    "content": "전체 임플란트 사례...",
+    "imageUrl": "https://laonnuri-case.com/wp-content/uploads/2025/10/image-151.png",
+    "createdAt": "2023-10-25T10:00:00Z"
+  }
+]
