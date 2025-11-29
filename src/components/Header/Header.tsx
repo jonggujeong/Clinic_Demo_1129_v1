@@ -15,7 +15,7 @@ const Header = () => {
           <Link href="#team" className="text-gray-700 hover:text-blue-900 font-medium">의료진소개</Link>
           <Link href="#special" className="text-gray-700 hover:text-blue-900 font-medium">특화진료</Link>
           <Link href="#subjects" className="text-gray-700 hover:text-blue-900 font-medium">진료과목</Link>
-          <Link href="#cases" className="text-gray-700 hover:text-blue-900 font-medium">임상사례</Link>
+          <Link href="/cases" className="text-gray-700 hover:text-blue-900 font-medium">임상사례</Link>
           <Link href="#equipment" className="text-gray-700 hover:text-blue-900 font-medium">장비소개</Link>
           <Link href="#interior" className="text-gray-700 hover:text-blue-900 font-medium">둘러보기</Link>
           <Link href="#info" className="text-gray-700 hover:text-blue-900 font-medium">진료안내</Link>
