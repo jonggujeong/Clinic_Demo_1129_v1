@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface Case {
   id: string;
@@ -40,46 +39,68 @@ export default function CasesPage() {
           </p>
         </div>
 
-        {/* Filters/Categories - Simplified for now */}
-        <div className="flex justify-center gap-4 mb-12 flex-wrap">
-           <button className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">전체</button>
-           {/* Add more filter buttons as needed */}
+        {/* Board List */}
+        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+          {loading ? (
+             <div className="text-center py-20">Loading...</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                      No
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                      분류
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      제목
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                      작성자
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
+                      작성일
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {cases.map((c, index) => (
+                    <tr key={c.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        {cases.length - index}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          {c.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <Link href={`/cases/${c.id}`} className="hover:text-blue-600 hover:underline block w-full truncate">
+                          {c.title}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        관리자
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        {c.date}
+                      </td>
+                    </tr>
+                  ))}
+                  {cases.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-10 text-center text-sm text-gray-500">
+                        등록된 게시물이 없습니다.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-
-        {loading ? (
-           <div className="text-center py-20">Loading...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cases.map((c) => (
-              <div key={c.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
-                <div className="relative h-64 w-full bg-gray-200">
-                   {/* Use unoptimized if external images are not configured or handled via next/image perfectly */}
-                   {c.imageUrl ? (
-                     <Image
-                       src={c.imageUrl}
-                       alt={c.title}
-                       fill
-                       className="object-cover"
-                       unoptimized // Since users might paste arbitrary URLs
-                     />
-                   ) : (
-                     <div className="flex items-center justify-center h-full text-gray-400">No Image</div>
-                   )}
-                   <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">
-                     {c.category}
-                   </div>
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{c.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">{c.content}</p>
-                  <div className="mt-auto text-xs text-gray-400 border-t pt-4">
-                    {c.date}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       <Footer />

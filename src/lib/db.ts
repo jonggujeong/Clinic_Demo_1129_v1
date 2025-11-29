@@ -41,3 +41,19 @@ export async function deleteCase(id: string): Promise<void> {
   const filteredCases = cases.filter((c) => c.id !== id);
   await saveCases(filteredCases);
 }
+
+export async function getCase(id: string): Promise<Case | undefined> {
+  const cases = await getCases();
+  return cases.find((c) => c.id === id);
+}
+
+export async function updateCase(id: string, updatedData: Partial<Case>): Promise<Case | null> {
+  const cases = await getCases();
+  const index = cases.findIndex((c) => c.id === id);
+  if (index === -1) return null;
+
+  const updatedCase = { ...cases[index], ...updatedData };
+  cases[index] = updatedCase;
+  await saveCases(cases);
+  return updatedCase;
+}
