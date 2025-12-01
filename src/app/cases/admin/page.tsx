@@ -20,6 +20,9 @@ export default function AdminPage() {
   const router = useRouter();
 
   // Form State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
+
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('임플란트');
   const [imageUrl, setImageUrl] = useState('');
@@ -60,38 +63,69 @@ export default function AdminPage() {
     const res = await fetch(`/api/cases/${id}`, { method: 'DELETE' });
     if (res.ok) {
       loadCases();
+      // If we deleted the item being edited, reset the form
+      if (editId === id) {
+          resetForm();
+      }
     } else {
       alert('Failed to delete');
     }
+  };
+
+  const handleEdit = (c: Case) => {
+      setIsEditing(true);
+      setEditId(c.id);
+      setTitle(c.title);
+      setCategory(c.category);
+      setImageUrl(c.imageUrl);
+      setContent(c.content);
+      // scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
+      setIsEditing(false);
+      setEditId(null);
+      setTitle('');
+      setCategory('임플란트');
+      setImageUrl('');
+      setContent('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
-    const newCase = {
+    const caseData = {
       title,
       category,
       imageUrl,
       content,
-      date: new Date().toISOString().split('T')[0],
+      // If editing, keep original date or update? Usually keep original unless requested.
+      // But for new posts we set date.
+      ...(isEditing ? {} : { date: new Date().toISOString().split('T')[0] }),
     };
 
-    const res = await fetch('/api/cases', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newCase),
-    });
+    let res;
+    if (isEditing && editId) {
+        res = await fetch(`/api/cases/${editId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(caseData),
+        });
+    } else {
+        res = await fetch('/api/cases', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(caseData),
+        });
+    }
 
     if (res.ok) {
-      // Reset form
-      setTitle('');
-      setCategory('임플란트');
-      setImageUrl('');
-      setContent('');
+      resetForm();
       loadCases();
     } else {
-      alert('Failed to add case');
+      alert(isEditing ? 'Failed to update case' : 'Failed to add case');
     }
     setSubmitting(false);
   };
@@ -114,7 +148,13 @@ export default function AdminPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form Section */}
           <div className="bg-white p-6 rounded-lg shadow-md h-fit">
-            <h2 className="text-xl font-bold mb-4">새 사례 추가</h2>
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">{isEditing ? '사례 수정' : '새 사례 추가'}</h2>
+                {isEditing && (
+                    <button onClick={resetForm} className="text-sm text-gray-500 hover:text-gray-700">취소</button>
+                )}
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">제목</label>
@@ -165,9 +205,9 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50"
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none disabled:opacity-50 ${isEditing ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
-                {submitting ? '저장 중...' : '추가하기'}
+                {submitting ? '저장 중...' : (isEditing ? '수정하기' : '추가하기')}
               </button>
             </form>
           </div>
@@ -180,7 +220,7 @@ export default function AdminPage() {
             ) : (
               <div className="space-y-4">
                 {cases.map((c) => (
-                  <div key={c.id} className="border p-4 rounded-lg flex gap-4 items-start">
+                  <div key={c.id} className={`border p-4 rounded-lg flex gap-4 items-start ${editId === c.id ? 'border-blue-500 ring-2 ring-blue-200' : ''}`}>
                     {c.imageUrl && (
                       <div className="w-24 h-24 relative flex-shrink-0 bg-gray-100">
                         <img
@@ -196,12 +236,20 @@ export default function AdminPage() {
                            <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">{c.category}</span>
                            <h3 className="font-bold text-lg mt-1">{c.title}</h3>
                         </div>
-                        <button
-                          onClick={() => handleDelete(c.id)}
-                          className="text-red-500 hover:text-red-700 text-sm"
-                        >
-                          삭제
-                        </button>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handleEdit(c)}
+                                className="text-blue-500 hover:text-blue-700 text-sm"
+                            >
+                                수정
+                            </button>
+                            <button
+                                onClick={() => handleDelete(c.id)}
+                                className="text-red-500 hover:text-red-700 text-sm"
+                            >
+                                삭제
+                            </button>
+                        </div>
                       </div>
                       <p className="text-gray-600 text-sm mt-2 line-clamp-2">{c.content}</p>
                       <p className="text-gray-400 text-xs mt-2">{c.date}</p>
